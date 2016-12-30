@@ -1,0 +1,24 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          set random hostname
+# Required-Start:
+# Required-Stop:
+# Default-Start: 3
+# Default-Stop:
+# Short-Description: Sets a random hostname
+# Description:
+### END INIT INFO
+. /lib/lsb/init-functions
+case "$1" in
+  start)
+    log_daemon_msg "Setting a random hostname"
+    hostname `< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c${1:-16};echo;` &&
+    update-rc.d set_random_hostname remove &&
+    rm /etc/init.d/set_random_hostname &&
+    log_end_msg $?
+    ;;
+  *)
+    echo "Usage: $0 start" >&2
+    exit 3
+    ;;
+esac
