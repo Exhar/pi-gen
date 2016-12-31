@@ -1,6 +1,6 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          set random hostname
+# Provides:          set_random_hostname
 # Required-Start:
 # Required-Stop:
 # Default-Start: 3
@@ -12,7 +12,11 @@
 case "$1" in
   start)
     log_daemon_msg "Setting a random hostname"
-    hostname `< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c${1:-16};echo;` &&
+    CUSTOM_HOSTNAME=$(cat /sys/class/net/$(ip route show default | awk '/default/ {print $5}')/address | sed -e 's/://g' | md5sum | cut -d ' ' -f 1)
+    echo $CUSTOM_HOSTNAME > /etc/hostname
+    echo $CUSTOM_HOSTNAME
+    hostname $CUSTOM_HOSTNAME
+    echo "127.0.0.1      " $CUSTOM_HOSTNAME >> /etc/hosts
     update-rc.d set_random_hostname remove &&
     rm /etc/init.d/set_random_hostname &&
     log_end_msg $?
