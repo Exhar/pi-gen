@@ -12,7 +12,7 @@
 case "$1" in
   start)
     log_daemon_msg "Setting a random hostname"
-    CUSTOM_HOSTNAME=$(cat /sys/class/net/$(ip route show default | awk '/default/ {print $5}')/address | sed -e 's/://g' | md5sum | cut -d ' ' -f 1)
+    CUSTOM_HOSTNAME=$(python -c "from uuid import getnode as get_mac; print get_mac()" | md5sum | cut -d ' ' -f 1)
     echo $CUSTOM_HOSTNAME > /etc/hostname
     echo $CUSTOM_HOSTNAME
     hostname $CUSTOM_HOSTNAME
