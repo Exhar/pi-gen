@@ -1,0 +1,28 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          set_mac_hostname
+# Required-Start:
+# Required-Stop:
+# Default-Start: 3
+# Default-Stop:
+# Short-Description: Sets hostname based on (md5)mac
+# Description:
+### END INIT INFO
+. /lib/lsb/init-functions
+case "$1" in
+  start)
+    log_daemon_msg "Setting a mac hostname"
+    CUSTOM_HOSTNAME=$(python -c "import hashlib, fcntl, socket, struct; s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM);  info = fcntl.ioctl(s.fileno(), 0x8927,  struct.pack('256s', 'eth0'[:15])); print hashlib.md5(str(''.join(['%02x' % ord(char) for char in info[18:24]]))).hexdigest()")
+    echo $CUSTOM_HOSTNAME > /etc/hostname
+    echo $CUSTOM_HOSTNAME
+    hostname $CUSTOM_HOSTNAME
+    echo "127.0.0.1      " $CUSTOM_HOSTNAME >> /etc/hosts
+    update-rc.d set_mac_hostname remove &&
+    rm /etc/init.d/set_mac_hostname &&
+    log_end_msg $?
+    ;;
+  *)
+    echo "Usage: $0 start" >&2
+    exit 3
+    ;;
+esac

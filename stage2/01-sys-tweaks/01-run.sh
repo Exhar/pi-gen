@@ -3,7 +3,7 @@
 install -m 644 files/regenerate_ssh_host_keys.service	${ROOTFS_DIR}/lib/systemd/system/
 install -m 755 files/apply_noobs_os_config		${ROOTFS_DIR}/etc/init.d/
 install -m 755 files/resize2fs_once			${ROOTFS_DIR}/etc/init.d/
-install -m 755 files/set_random_hostname		${ROOTFS_DIR}/etc/init.d/
+install -m 755 files/set_mac_hostname			${ROOTFS_DIR}/etc/init.d/
 
 install -d						${ROOTFS_DIR}/etc/systemd/system/rc-local.service.d
 install -m 644 files/ttyoutput.conf			${ROOTFS_DIR}/etc/systemd/system/rc-local.service.d/
@@ -19,7 +19,7 @@ systemctl disable ssh
 systemctl enable regenerate_ssh_host_keys
 systemctl enable apply_noobs_os_config
 systemctl enable resize2fs_once
-systemctl enable set_random_hostname
+systemctl enable set_mac_hostname
 EOF
 
 on_chroot << \EOF
